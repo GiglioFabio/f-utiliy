@@ -1,54 +1,24 @@
-import { useEffect, useState } from 'react';
-import reactLogo from './assets/react.svg';
-import { invoke } from '@tauri-apps/api/core';
-import './App.css';
-import { writeText, readText } from '@tauri-apps/plugin-clipboard-manager';
-import { listen } from '@tauri-apps/api/event';
-
-type ClipboardEntry = {
-  content: string;
-  timestamp: string;
-};
+import { useState } from 'react';
+import Sidebar, { LEFT_MENU_ITEMS } from './components/Sidebars';
+import ContentArea from './components/Content-Area';
+import { motion } from 'framer-motion';
+import { MenuItem } from './interfaces';
 
 function App() {
-  const [clipBoardList, setClipBoardList] = useState<ClipboardEntry[]>([]);
-
-  useEffect(() => {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-
-    function getFirstData() {
-      invoke('get_clipboard_log').then((data) => {
-        setClipBoardList(data as ClipboardEntry[]);
-      });
-    }
-
-    getFirstData();
-
-    const unlisten = listen<ClipboardEntry[]>('clipboard-changed', (event) => {
-      setClipBoardList(event.payload);
-    });
-
-    return () => {
-      unlisten.then((off) => off());
-    };
-  }, []);
+  const [selected, setSelected] = useState<MenuItem>(LEFT_MENU_ITEMS[0]);
 
   return (
-    <main className='container'>
-      <h1>Welcome to Tauri + React</h1>
-
-      <div style={{ padding: 20 }}>
-        <h2>Clipboard log:</h2>
-        <ul>
-          {clipBoardList.map((entry, idx) => (
-            <li key={idx} onClick={() => writeText(entry.content)}>
-              <pre>{entry.content}</pre>
-              <small>{entry.timestamp}</small>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </main>
+    <div className='flex h-screen'>
+      <Sidebar selected={selected} onSelect={setSelected} />
+      <motion.div
+        key={selected.id}
+        className='flex-1 p-6 overflow-y-auto'
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}>
+        <ContentArea selected={selected} />
+      </motion.div>
+    </div>
   );
 }
 
