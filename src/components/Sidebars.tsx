@@ -6,7 +6,7 @@ import {
   Fingerprint,
 } from 'lucide-react';
 import { MenuItem } from '../interfaces';
-import ClipboardPage from '../pages/Clipboard.page';
+import { ClipboardPage, UuidPage } from '../pages';
 
 type Props = {
   selected: MenuItem;
@@ -32,8 +32,8 @@ export const LEFT_MENU_ITEMS: MenuItem[] = [
     id: 'uuid',
     label: 'UUID Generator',
     icon: Fingerprint,
-    header: null,
-    content: null,
+    header: '🔑 Generatore UUID',
+    content: <UuidPage />,
   },
   {
     id: 'projects',

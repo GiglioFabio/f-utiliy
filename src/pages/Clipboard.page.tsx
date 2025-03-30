@@ -10,7 +10,7 @@ type ClipboardEntry = {
   timestamp: string;
 };
 
-export default function ClipboardPage() {
+export function ClipboardPage() {
   const [copied, setCopied] = useState<string | null>(null);
 
   const [clipBoardList, setClipBoardList] = useState<ClipboardEntry[]>([]);
