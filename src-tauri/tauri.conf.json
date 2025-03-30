@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "f-utility",
+  "productName": "F-Utility",
   "version": "0.1.0",
   "identifier": "com.f-utility.app",
   "build": {
@@ -17,6 +17,10 @@
         "height": 600
       }
     ],
+    "trayIcon": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": false
+    },
     "security": {
       "csp": null
     }

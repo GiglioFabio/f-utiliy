@@ -1,5 +1,7 @@
 use arboard::Clipboard;
+use dirs_next::data_dir;
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 use std::{
     fs::{File, OpenOptions},
     io::{BufRead, BufReader, Write},
@@ -17,7 +19,6 @@ pub struct ClipboardEntry {
 }
 
 static LAST_TEXT: Mutex<String> = Mutex::new(String::new());
-const LOG_PATH: &str = "clipboard-log.json";
 const MAX_ENTRIES: usize = 100;
 
 #[tauri::command]
@@ -53,7 +54,7 @@ pub fn start_clipboard_watcher(app_handle: tauri::AppHandle) {
                     }
 
                     // Sovrascrivi il file
-                    if let Ok(mut file) = File::create(LOG_PATH) {
+                    if let Ok(mut file) = File::create(get_log_path()) {
                         for e in &entries {
                             if let Ok(line) = serde_json::to_string(e) {
                                 let _ = writeln!(file, "{}", line);
@@ -76,7 +77,7 @@ pub fn send_event_to_frontend(app_handle: &tauri::AppHandle, entries: Vec<Clipbo
 }
 
 pub fn read_log() -> Vec<ClipboardEntry> {
-    if let Ok(file) = File::open(LOG_PATH) {
+    if let Ok(file) = File::open(get_log_path()) {
         BufReader::new(file)
             .lines()
             .filter_map(|line| line.ok().and_then(|l| serde_json::from_str(&l).ok()))
@@ -84,4 +85,12 @@ pub fn read_log() -> Vec<ClipboardEntry> {
     } else {
         vec![]
     }
+}
+
+fn get_log_path() -> PathBuf {
+    let mut base_dir =
+        data_dir().expect("Non è stato possibile trovare la cartella dei dati utente");
+    base_dir.push("clipboard-watcher");
+    std::fs::create_dir_all(&base_dir).ok();
+    base_dir.join("clipboard-log.json")
 }
