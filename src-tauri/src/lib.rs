@@ -8,6 +8,8 @@ use tauri::{
 };
 use tauri::{AppHandle, Listener, Manager};
 mod clipboard;
+mod filemanager;
+use filemanager::{open_file, reveal_in_folder};
 
 const MAIN_WINDOW_NAME: &str = "main";
 const WINDOW_VISIBILITY_MENU_ITEM_ID: &str = "visibility";
@@ -45,9 +47,14 @@ fn get_clipboard_log() -> Vec<ClipboardEntry> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_clipboard_log])
+        .invoke_handler(tauri::generate_handler![
+            get_clipboard_log,
+            open_file,
+            reveal_in_folder
+        ])
         .setup(|app| {
             // 🔔 Tray Icon con click per riaprire la finestra
             let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;

@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import Sidebar, { LEFT_MENU_ITEMS } from './components/Sidebars';
+import Sidebar, { DEFAULT_MENU_ITEM } from './components/Sidebars';
 import ContentArea from './components/Content-Area';
 import { motion } from 'framer-motion';
 import { MenuItem } from './interfaces';
 import { GlobalProvider } from './GlobalContex';
 
 function App() {
-  const [selected, setSelected] = useState<MenuItem>(LEFT_MENU_ITEMS[0]);
+  const [selected, setSelected] = useState<MenuItem>(DEFAULT_MENU_ITEM);
 
   return (
     <GlobalProvider>

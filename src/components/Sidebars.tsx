@@ -8,6 +8,7 @@ import {
 import { MenuItem } from '../interfaces';
 import { ClipboardPage, UuidPage } from '../pages';
 import JsonToolsPage from '../pages/JsonManage.page';
+import RecentFilesPage from '../pages/RecentFile.page';
 
 type Props = {
   selected: MenuItem;
@@ -37,20 +38,15 @@ export const LEFT_MENU_ITEMS: MenuItem[] = [
     content: <UuidPage />,
   },
   {
-    id: 'projects',
-    label: 'Progetti',
-    icon: FileText,
-    header: null,
-    content: null,
-  },
-  {
     id: 'recent',
     label: 'Recenti',
     icon: FileClock,
-    header: null,
-    content: null,
+    header: '📂 File Recenti',
+    content: <RecentFilesPage />,
   },
 ];
+
+export const DEFAULT_MENU_ITEM: MenuItem = LEFT_MENU_ITEMS[3];
 
 export default function Sidebar({ selected, onSelect }: Props) {
   return (
