@@ -110,15 +110,16 @@ pub fn run() {
                     Some(vec!["--flag1", "--flag2"]),
                 ));
 
+                // Get the autostart manager
                 let autostart_manager = app.autolaunch();
-
+                // Enable autostart
                 let _ = autostart_manager.enable();
-
+                // Check enable state
                 println!(
                     "registered for autostart? {}",
-                    autostart_manager.is_enabled().unwrap_or(false)
+                    autostart_manager.is_enabled().unwrap()
                 );
-
+                // Disable autostart
                 let _ = autostart_manager.disable();
             }
             Ok(())

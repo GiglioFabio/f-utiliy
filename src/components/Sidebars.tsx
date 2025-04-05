@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { MenuItem } from '../interfaces';
 import { ClipboardPage, UuidPage } from '../pages';
+import JsonToolsPage from '../pages/JsonManage.page';
 
 type Props = {
   selected: MenuItem;
@@ -25,8 +26,8 @@ export const LEFT_MENU_ITEMS: MenuItem[] = [
     id: 'json',
     label: 'JSON Tools',
     icon: Braces,
-    header: null,
-    content: null,
+    header: '🛠️ Strumenti JSON',
+    content: <JsonToolsPage />,
   },
   {
     id: 'uuid',

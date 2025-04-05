@@ -18,3 +18,5 @@ cargo tauri build
 
 Cancellazione lista copia
 Aggiunta funzionalità nei menu in alto
+
+Input che cancella la formattazione e risalva nella clipboard
