@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from 'react';
 
-import { FolderOpen, Search, Eye } from 'lucide-react';
-import { loadRecentFiles, addRecentFile, RecentFile, pickFile } from '../utils';
+import { FolderOpen, Search, Eye, Trash } from 'lucide-react';
+import {
+  loadRecentFiles,
+  addRecentFile,
+  RecentFile,
+  pickFile,
+  deleteSingleRecentFile,
+} from '../utils';
 import { Button, Card, CardContent } from '../core-ui';
 import { invoke } from '@tauri-apps/api/core';
 import { Input, TagInput } from '../components';
+import { useDialog } from '../contexts';
 
 const RecentFilesPage: React.FC = () => {
   const [files, setFiles] = useState<RecentFile[]>([]);
   const [query, setQuery] = useState('');
+  const { showDialog } = useDialog();
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -73,6 +81,19 @@ const RecentFilesPage: React.FC = () => {
     setFiles(await loadRecentFiles());
   };
 
+  const handleDeleteFile = (file: RecentFile) => {
+    showDialog({
+      title: 'Eliminare il file?',
+      description: `Il file "${file.name}" verrà eliminato in modo permanente.`,
+      confirmText: 'Elimina',
+      cancelText: 'Annulla',
+      onConfirm: async () => {
+        await deleteSingleRecentFile(file.path);
+        setFiles((prev) => prev.filter((f) => f.path !== file.path));
+      },
+    });
+  };
+
   return (
     <div className='flex flex-col items-center gap-2 mb-6'>
       <div className='flex  md:flex-row md:items-center gap-2 mb-6 w-full'>
@@ -123,6 +144,9 @@ const RecentFilesPage: React.FC = () => {
                   </Button>
                   <Button onClick={() => handleRevealFile(file)}>
                     <FolderOpen className='h-4 w-4' />
+                  </Button>
+                  <Button onClick={() => handleDeleteFile(file)}>
+                    <Trash className='h-4 w-4' />
                   </Button>
                 </div>
               </div>

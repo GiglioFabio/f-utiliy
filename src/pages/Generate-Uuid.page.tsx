@@ -3,7 +3,7 @@ import { ClipboardCopy, RefreshCw } from 'lucide-react';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { motion } from 'framer-motion';
 import { v4 as uuidv4 } from 'uuid';
-import { useGlobalContext } from '../GlobalContex';
+import { useGlobalContext } from '../contexts';
 
 export function UuidPage() {
   const { uuid, setUuid } = useGlobalContext();

@@ -11,6 +11,10 @@ export async function loadRecentFiles(): Promise<RecentFile[]> {
   return files;
 }
 
+export async function deleteSingleRecentFile(path: string) {
+  await invoke('clear_single_recent_file', { path });
+}
+
 export function addRecentFile(file: RecentFile) {
   invoke('add_recent_file', {
     path: file.path,

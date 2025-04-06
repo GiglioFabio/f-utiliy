@@ -1,16 +1,14 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-use clipboard::ClipboardEntry;
+
+use tauri::menu::MenuItem;
 use tauri::menu::{IsMenuItem, MenuBuilder, MenuItemBuilder, SubmenuBuilder};
-use tauri::{
-    menu::{Menu, MenuItem},
-    tray::{TrayIcon, TrayIconBuilder, TrayIconEvent},
-    WebviewWindow, WindowEvent,
-};
 use tauri::{AppHandle, Listener, Manager};
 mod clipboard;
 use clipboard::get_clipboard_log;
 mod filemanager;
-use filemanager::{add_recent_file, load_recent_files, open_file, reveal_in_folder};
+use filemanager::{
+    add_recent_file, clear_single_recent_file, load_recent_files, open_file, reveal_in_folder,
+};
 
 const MAIN_WINDOW_NAME: &str = "main";
 const WINDOW_VISIBILITY_MENU_ITEM_ID: &str = "visibility";
@@ -55,6 +53,7 @@ pub fn run() {
             reveal_in_folder,
             add_recent_file,
             load_recent_files,
+            clear_single_recent_file,
             open_accessibility_settings
         ])
         .setup(|app| {
@@ -229,7 +228,7 @@ fn update_tray_menu(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
                 let recent_items = load_recent_files();
                 if let Some(item) = recent_items.get(index.parse::<usize>().unwrap()) {
                     println!("Recent item clicked: {}", item.name);
-                    open_file(item.path.clone());
+                    let _ = open_file(item.path.clone());
                 }
             }
             id => println!("Unknown tray event id: {}", id),

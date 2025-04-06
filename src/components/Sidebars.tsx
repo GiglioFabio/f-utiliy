@@ -10,7 +10,6 @@ import { ClipboardPage, UuidPage } from '../pages';
 import JsonToolsPage from '../pages/JsonManage.page';
 import RecentFilesPage from '../pages/RecentFile.page';
 import SettingsPage from '../pages/Settings.page';
-import { cn } from '../core-ui/util';
 
 type Props = {
   selected: MenuItem;

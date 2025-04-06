@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     fs::File,
     io::{BufRead, BufReader, Write},
-    path::PathBuf,
+    path::{self, PathBuf},
 };
 use tauri::Emitter;
 
@@ -85,6 +85,22 @@ pub fn load_recent_files() -> Vec<RecentFileEntry> {
     return first_entries;
 }
 
+#[tauri::command]
+pub fn clear_single_recent_file(path: String) {
+    let mut entries = read_recent_files();
+    entries.retain(|e| e.path != path);
+
+    println!("🗑️  {}", path);
+
+    // Sovrascrivi il file
+    if let Ok(mut file) = File::create(get_recent_file_path()) {
+        for e in &entries {
+            if let Ok(line) = serde_json::to_string(e) {
+                let _ = writeln!(file, "{}", line);
+            }
+        }
+    }
+}
 // -------- FUNTIONS -------
 
 pub fn read_recent_files() -> Vec<RecentFileEntry> {

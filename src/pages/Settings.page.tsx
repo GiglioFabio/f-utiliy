@@ -65,7 +65,7 @@ export default function SettingsPage() {
               <hr className='text-sm text-muted-foreground' />
 
               <div className=''>
-                <Button className='text-sm'>
+                <Button className='text-sm' onClick={() => apriAccessibilita()}>
                   Apri impostazioni accessibilità
                 </Button>
               </div>
