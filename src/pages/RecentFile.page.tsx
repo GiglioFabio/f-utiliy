@@ -74,16 +74,16 @@ const RecentFilesPage: React.FC = () => {
   };
 
   return (
-    <div className='flex flex-col  items-center gap-2 mb-6'>
-      <div className='flex flex-col md:flex-row md:items-center gap-2 mb-6 w-full'>
-        <div className='flex items-center gap-2 flex-1 border border-gray-300 rounded-lg px-3 py-2 shadow-sm'>
-          <Search className='h-5 w-5 text-gray-500' />
+    <div className='flex flex-col items-center gap-2 mb-6'>
+      <div className='flex  md:flex-row md:items-center gap-2 mb-6 w-full'>
+        <div className='flex items-center gap-2 flex-1 border border-input rounded-lg px-3 py-2 shadow-sm bg-background'>
+          <Search className='h-5 w-5 text-muted-foreground' />
           <Input
             type='text'
             placeholder='Cerca per nome o tag...'
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className='border-none shadow-none focus:ring-0 focus:outline-none px-0'
+            className='border-none shadow-none focus:ring-0 focus:outline-none px-0 bg-transparent text-foreground'
           />
         </div>
 
@@ -107,12 +107,12 @@ const RecentFilesPage: React.FC = () => {
         {filtered.map((file) => (
           <Card key={file.path} className='rounded-2xl shadow w-full'>
             <CardContent className='p-4 w-full'>
-              <div className='flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-3'>
+              <div className='flex flex-row  md:justify-between md:items-start gap-4 mb-3'>
                 <div className='flex-1 min-w-0'>
-                  <p className='font-semibold break-words leading-snug text-base'>
+                  <p className='font-semibold break-words leading-snug text-base text-foreground'>
                     {file.name}
                   </p>
-                  <p className='text-sm text-gray-500 break-all leading-snug'>
+                  <p className='text-sm text-muted-foreground break-all leading-snug'>
                     {file.path}
                   </p>
                 </div>
@@ -131,11 +131,11 @@ const RecentFilesPage: React.FC = () => {
                 {file.tags.map((tag) => (
                   <div
                     key={tag}
-                    className='flex items-center bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full'>
+                    className='flex items-center bg-muted text-muted-foreground text-sm px-2 py-1 rounded-full'>
                     <span>#{tag}</span>
                     <button
                       onClick={() => removeTag(file, tag)}
-                      className='ml-2 text-blue-500 hover:text-blue-700'>
+                      className='ml-2 text-primary hover:underline'>
                       &times;
                     </button>
                   </div>

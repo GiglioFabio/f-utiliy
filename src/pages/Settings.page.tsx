@@ -1,5 +1,5 @@
 // src/components/SettingsPage.tsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
   Card,
@@ -13,6 +13,7 @@ import {
 } from '../core-ui';
 import { Input } from '../components';
 import { invoke } from '@tauri-apps/api/core';
+import { getInitialTheme, saveTheme } from '../utils';
 
 export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
@@ -22,13 +23,28 @@ export default function SettingsPage() {
     invoke('open_accessibility_settings');
   }
 
+  useEffect(() => {
+    const savedTheme = getInitialTheme();
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    setDarkMode(savedTheme === 'dark');
+  }, []);
+
+  const toggleTheme = () => {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') as 'light' | 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+
+    html.setAttribute('data-theme', next);
+    saveTheme(next);
+  };
+
   return (
     <div className='p-6 pt-0 max-w-3xl mx-auto'>
       <Tabs defaultValue='generali' className='w-full'>
-        <TabsList className='mb-4'>
+        <TabsList className='mb-4 bg-card text-card-foreground border border-border rounded-lg'>
           <TabsTrigger value='generali'>Generali</TabsTrigger>
-          <TabsTrigger value='account'>Account</TabsTrigger>
-          <TabsTrigger value='avanzate'>Avanzate</TabsTrigger>
+          {/* <TabsTrigger value='account'>Account</TabsTrigger>
+          <TabsTrigger value='avanzate'>Avanzate</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value='generali'>
@@ -39,20 +55,19 @@ export default function SettingsPage() {
                 <Switch
                   id='dark-mode'
                   checked={darkMode}
-                  onCheckedChange={setDarkMode}
+                  onCheckedChange={() => {
+                    toggleTheme();
+                    setDarkMode(!darkMode);
+                  }}
                 />
               </div>
 
-              <div className='pt-4'>
-                <button
-                  onClick={() => {
-                    // azione qui, es: apri una modale, o naviga, o chiama invoke
-                    console.log('Accessibilità aperta');
-                    apriAccessibilita();
-                  }}
-                  className='px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition'>
+              <hr className='text-sm text-muted-foreground' />
+
+              <div className=''>
+                <Button className='text-sm'>
                   Apri impostazioni accessibilità
-                </button>
+                </Button>
               </div>
             </CardContent>
           </Card>

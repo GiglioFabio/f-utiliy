@@ -1,4 +1,5 @@
 import React from 'react';
+import { cn } from './util';
 
 export const Card: React.FC<{
   children: React.ReactNode;
@@ -6,9 +7,10 @@ export const Card: React.FC<{
 }> = ({ children, className }) => {
   return (
     <div
-      className={`bg-white border border-gray-200 rounded-2xl shadow-sm ${
-        className ?? ''
-      }`}>
+      className={cn(
+        'bg-card text-card-foreground border border-border rounded-2xl shadow-sm',
+        className
+      )}>
       {children}
     </div>
   );

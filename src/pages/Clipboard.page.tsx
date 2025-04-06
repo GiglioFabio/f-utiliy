@@ -44,20 +44,20 @@ export function ClipboardPage() {
   return (
     <div className='space-y-4'>
       {clipBoardList.length === 0 && (
-        <p className='text-gray-400'>Nessun contenuto disponibile.</p>
+        <p className='text-muted-foreground'>Nessun contenuto disponibile.</p>
       )}
       <ul className='space-y-2 max-h-[80vh] overflow-y-auto pr-2'>
         {clipBoardList.map((entry, idx) => (
           <motion.li
             key={idx}
             whileHover={{ scale: 1.02 }}
-            className='bg-gray-100 dark:bg-gray-800 p-3 rounded-lg shadow-sm transition-colors cursor-pointer flex items-center justify-between'
+            className='bg-muted text-muted-foreground p-3 rounded-lg shadow-sm transition-colors cursor-pointer flex items-center justify-between'
             onClick={() => handleCopy(entry.content)}>
             <div className='flex items-start gap-3'>
-              <span className='text-xs text-gray-500 mt-1 w-5 text-right'>
+              <span className='text-xs text-muted-foreground mt-1 w-5 text-right'>
                 #{idx + 1}
               </span>
-              <pre className='whitespace-pre-wrap font-mono text-sm text-gray-800 dark:text-gray-100'>
+              <pre className='whitespace-pre-wrap font-mono text-sm text-foreground'>
                 {entry.content}
               </pre>
             </div>
@@ -67,7 +67,7 @@ export function ClipboardPage() {
                   Copiato!
                 </span>
               ) : (
-                <ClipboardCopy className='w-4 h-4 text-gray-400 hover:text-black dark:hover:text-white' />
+                <ClipboardCopy className='w-4 h-4 text-muted-foreground hover:text-foreground' />
               )}
             </div>
           </motion.li>

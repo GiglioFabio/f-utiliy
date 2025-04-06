@@ -11,7 +11,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       className={cn(
-        'inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 transition-colors shadow',
+        'inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-2xl hover:opacity-90 transition-colors shadow',
         className
       )}
       {...props}>

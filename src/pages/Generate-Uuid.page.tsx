@@ -27,21 +27,21 @@ export function UuidPage() {
     <div className='space-y-6'>
       <button
         onClick={generate}
-        className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded inline-flex items-center gap-2'>
-        <RefreshCw className='w-4 h-4' /> Genera UUID v4
+        className='bg-primary text-primary-foreground hover:opacity-90 px-4 py-2 rounded inline-flex items-center gap-2 transition-colors'>
+        <RefreshCw className='w-4 h-4' />
+        Genera UUID v4
       </button>
 
       {uuid && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className='flex items-center justify-between bg-gray-100 dark:bg-gray-800 p-4 rounded shadow-sm'>
-          <code className='text-sm break-all font-mono text-gray-800 dark:text-gray-200'>
-            {uuid}
-          </code>
+          className='flex items-center justify-between bg-muted text-muted-foreground p-4 rounded shadow-sm transition-colors'>
+          <code className='text-sm break-all font-mono'>{uuid}</code>
+
           <button
             onClick={copy}
-            className='ml-4 text-sm text-blue-600 hover:text-blue-800'>
+            className='ml-4 text-sm text-accent hover:underline transition-colors'>
             {copied ? '✅ Copiato' : <ClipboardCopy className='w-4 h-4' />}
           </button>
         </motion.div>
