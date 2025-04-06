@@ -1,2 +1,2 @@
-export * from './file-local-storage';
+export * from './recent-files';
 export * from './select-file';

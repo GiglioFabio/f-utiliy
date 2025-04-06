@@ -1,10 +1,4 @@
-import {
-  Clipboard,
-  FileText,
-  FileClock,
-  Braces,
-  Fingerprint,
-} from 'lucide-react';
+import { Clipboard, FileClock, Braces, Fingerprint } from 'lucide-react';
 import { MenuItem } from '../interfaces';
 import { ClipboardPage, UuidPage } from '../pages';
 import JsonToolsPage from '../pages/JsonManage.page';

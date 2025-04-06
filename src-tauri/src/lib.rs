@@ -8,8 +8,9 @@ use tauri::{
 };
 use tauri::{AppHandle, Listener, Manager};
 mod clipboard;
+use clipboard::get_clipboard_log;
 mod filemanager;
-use filemanager::{open_file, reveal_in_folder};
+use filemanager::{add_recent_file, load_recent_files, open_file, reveal_in_folder};
 
 const MAIN_WINDOW_NAME: &str = "main";
 const WINDOW_VISIBILITY_MENU_ITEM_ID: &str = "visibility";
@@ -34,26 +35,20 @@ fn toggle_app_visibility(app: &AppHandle) {
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
-#[tauri::command]
-fn get_clipboard_log() -> Vec<ClipboardEntry> {
-    //read first time
-    let first_entries = clipboard::read_log();
-    // for entry in &first_entries {
-    //     println!("📝 {} @ {}", entry.content, entry.timestamp);
-    // }
-    return first_entries;
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_log::Builder::new().build())
+        // .plugin(tauri_plugin_global_shortcut::Builder::new().build()) //https://github.com/tauri-apps/plugins-workspace/issues/2540
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             get_clipboard_log,
             open_file,
-            reveal_in_folder
+            reveal_in_folder,
+            add_recent_file,
+            load_recent_files
         ])
         .setup(|app| {
             // 🔔 Tray Icon con click per riaprire la finestra
@@ -107,6 +102,7 @@ pub fn run() {
             });
 
             // Autostart macOS
+            // TODO sembra non andare
             #[cfg(desktop)]
             {
                 use tauri_plugin_autostart::MacosLauncher;
@@ -128,6 +124,37 @@ pub fn run() {
                 );
                 // Disable autostart
                 let _ = autostart_manager.disable();
+            }
+
+            // Shortcut listener
+            #[cfg(desktop)]
+            {
+                use tauri_plugin_global_shortcut::{
+                    Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState,
+                };
+                let paste_without_formatting =
+                    Shortcut::new(Some(Modifiers::SHIFT | Modifiers::SUPER), Code::KeyV);
+                app.handle().plugin(
+                    tauri_plugin_global_shortcut::Builder::new()
+                        .with_handler(move |_app, shortcut, event| {
+                            println!("{:?}", shortcut);
+                            if shortcut == &paste_without_formatting {
+                                match event.state() {
+                                    ShortcutState::Pressed => {
+                                        println!("Cmd-SHIFT-V Pressed!");
+                                    }
+                                    ShortcutState::Released => {
+                                        println!("Cmd-SHIFT-V Released!");
+                                        clipboard::clear_format_current_clipboard();
+                                        clipboard::simulate_cmd_v();
+                                    }
+                                }
+                            }
+                        })
+                        .build(),
+                )?;
+
+                app.global_shortcut().register(paste_without_formatting)?;
             }
             Ok(())
         })

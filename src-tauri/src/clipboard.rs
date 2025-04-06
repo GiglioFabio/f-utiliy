@@ -1,15 +1,16 @@
 use arboard::Clipboard;
 use dirs_next::data_dir;
+use enigo::{Enigo, Key, KeyboardControllable};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::{
-    fs::{File, OpenOptions},
+    fs::File,
     io::{BufRead, BufReader, Write},
     sync::Mutex,
     thread,
     time::Duration,
 };
-use tauri::{Emitter, Manager};
+use tauri::Emitter;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ClipboardEntry {
@@ -20,6 +21,8 @@ pub struct ClipboardEntry {
 
 static LAST_TEXT: Mutex<String> = Mutex::new(String::new());
 const MAX_ENTRIES: usize = 100;
+
+// -------------Commands------------
 
 #[tauri::command]
 pub fn start_clipboard_watcher(app_handle: tauri::AppHandle) {
@@ -72,6 +75,17 @@ pub fn start_clipboard_watcher(app_handle: tauri::AppHandle) {
     });
 }
 
+#[tauri::command]
+pub fn get_clipboard_log() -> Vec<ClipboardEntry> {
+    //read first time
+    let first_entries = read_log();
+    // for entry in &first_entries {
+    //     println!("📝 {} @ {}", entry.content, entry.timestamp);
+    // }
+    return first_entries;
+}
+
+// -------------------------
 pub fn send_event_to_frontend(app_handle: &tauri::AppHandle, entries: Vec<ClipboardEntry>) {
     app_handle.emit("clipboard-changed", entries).unwrap();
 }
@@ -93,4 +107,28 @@ fn get_log_path() -> PathBuf {
     base_dir.push("clipboard-watcher");
     std::fs::create_dir_all(&base_dir).ok();
     base_dir.join("clipboard-log.json")
+}
+
+pub fn clear_format_current_clipboard() {
+    if let Ok(mut clipboard) = Clipboard::new() {
+        if let Ok(text) = clipboard.get_text() {
+            let cleaned = text.trim().to_string();
+            let _ = clipboard.set_text(cleaned);
+        }
+    }
+}
+
+pub fn simulate_cmd_v() {
+    thread::sleep(Duration::from_millis(150));
+    let mut enigo = Enigo::new();
+
+    #[cfg(target_os = "windows")]
+    let modifier = Key::Control;
+
+    #[cfg(target_os = "macos")]
+    let modifier = Key::Meta;
+
+    enigo.key_down(modifier);
+    enigo.key_click(Key::Layout('v'));
+    enigo.key_up(modifier);
 }

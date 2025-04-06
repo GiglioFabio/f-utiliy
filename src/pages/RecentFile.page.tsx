@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { FolderOpen, Search, Tag, Eye } from 'lucide-react';
-import {
-  loadRecentFiles,
-  saveRecentFiles,
-  addRecentFile,
-  RecentFile,
-  pickFile,
-} from '../utils';
+import { FolderOpen, Search, Eye } from 'lucide-react';
+import { loadRecentFiles, addRecentFile, RecentFile, pickFile } from '../utils';
 import { Button, Card, CardContent } from '../core-ui';
 import { invoke } from '@tauri-apps/api/core';
 import { Input, TagInput } from '../components';
@@ -17,7 +11,12 @@ const RecentFilesPage: React.FC = () => {
   const [query, setQuery] = useState('');
 
   useEffect(() => {
-    setFiles(loadRecentFiles());
+    const fetchFiles = async () => {
+      const files = await loadRecentFiles();
+      setFiles(files);
+    };
+
+    fetchFiles();
   }, []);
 
   const filtered = files.filter(
@@ -28,34 +27,50 @@ const RecentFilesPage: React.FC = () => {
 
   const handleAddTag = (file: RecentFile, newTag: string) => {
     if (!newTag.trim()) return;
-    const updated = files.map((f) =>
-      f.path === file.path && !f.tags.includes(newTag)
-        ? { ...f, tags: [...f.tags, newTag] }
-        : f
-    );
-    setFiles(updated);
-    saveRecentFiles(updated);
+    // const updated = files.map((f) =>
+    //   f.path === file.path && !f.tags.includes(newTag)
+    //     ? { ...f, tags: [...f.tags, newTag] }
+    //     : f
+    // );
+    // setFiles(updated);
+    // saveRecentFiles(updated);
+    const fileWithTag = {
+      ...file,
+      tags: [...file.tags, newTag],
+    };
+    // remove duplicates tags
+    fileWithTag.tags = [...new Set(fileWithTag.tags)];
+
+    addRecentFile(fileWithTag);
+    loadRecentFiles().then((files) => setFiles(files));
   };
 
-  const removeTag = (tagToRemove: string) => {
-    const updated = files.map((file) => ({
+  const removeTag = (file: RecentFile, tagToRemove: string) => {
+    // const updated = files.map((file) => ({
+    //   ...file,
+    //   tags: file.tags.filter((tag) => tag !== tagToRemove),
+    // }));
+    // setFiles(updated);
+    // saveRecentFiles(updated);
+
+    const fileNoTag = {
       ...file,
       tags: file.tags.filter((tag) => tag !== tagToRemove),
-    }));
-    setFiles(updated);
-    saveRecentFiles(updated);
+    };
+    addRecentFile(fileNoTag);
+    loadRecentFiles().then((files) => setFiles(files));
   };
 
   const handleOpenFile = async (file: RecentFile) => {
     invoke('open_file', { path: file.path });
     addRecentFile(file);
-    setFiles(loadRecentFiles());
+    setFiles(await loadRecentFiles());
   };
 
   const handleRevealFile = async (file: RecentFile) => {
     invoke('reveal_in_folder', { path: file.path });
     addRecentFile(file);
-    setFiles(loadRecentFiles());
+    setFiles(await loadRecentFiles());
   };
 
   return (
@@ -113,13 +128,13 @@ const RecentFilesPage: React.FC = () => {
               </div>
 
               <div className='flex flex-wrap items-center gap-2'>
-                {file.tags.map((tag, i) => (
+                {file.tags.map((tag) => (
                   <div
                     key={tag}
                     className='flex items-center bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full'>
                     <span>#{tag}</span>
                     <button
-                      onClick={() => removeTag(tag)}
+                      onClick={() => removeTag(file, tag)}
                       className='ml-2 text-blue-500 hover:text-blue-700'>
                       &times;
                     </button>
