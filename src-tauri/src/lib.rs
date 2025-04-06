@@ -1,6 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use clipboard::ClipboardEntry;
-use tauri::menu::{MenuBuilder, MenuItemBuilder};
+use tauri::menu::{IsMenuItem, MenuBuilder, MenuItemBuilder, SubmenuBuilder};
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{TrayIcon, TrayIconBuilder, TrayIconEvent},
@@ -58,42 +58,8 @@ pub fn run() {
             open_accessibility_settings
         ])
         .setup(|app| {
-            // 🔔 Tray Icon con click per riaprire la finestra
-            let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&quit_i])?;
-
-            let tray = TrayIconBuilder::new()
-                .menu(&menu)
-                .menu_on_left_click(true)
-                .show_menu_on_left_click(true)
-                .build(app)?;
-
-            // Set up system tray
-            let toggle_visibility =
-                MenuItemBuilder::with_id(WINDOW_VISIBILITY_MENU_ITEM_ID, WINDOW_VISIBILITY_TITLE)
-                    .build(app)?;
-            let quit =
-                MenuItemBuilder::with_id(WINDOW_QUIT_MENU_ITEM_ID, WINDOW_QUIT_TITLE).build(app)?;
-
-            let menu = MenuBuilder::new(app)
-                .items(&[&toggle_visibility, &quit])
-                .build()?;
-
-            if let Some(tray_icon) = app.tray_by_id(MAIN_WINDOW_NAME) {
-                tray_icon.set_menu(Some(menu)).unwrap();
-                tray_icon.on_menu_event(move |app, event| match event.id().as_ref() {
-                    WINDOW_VISIBILITY_MENU_ITEM_ID => toggle_app_visibility(app),
-                    WINDOW_QUIT_MENU_ITEM_ID => {
-                        println!("Exiting the app...");
-
-                        app.cleanup_before_exit();
-                        std::process::exit(0);
-                    }
-                    event_id => println!("Unknown tray event id"),
-                });
-            } else {
-                println!("Cannot find the 'main' tray icon :(");
-            }
+            // 🔔 Tray Icon
+            update_tray_menu(app.handle())?;
 
             let app_handle1 = app.handle().clone();
             // 🔔 Listener per quando l'utente clicca sull’icona nel Dock (o sulla taskbar in Windows)
@@ -195,4 +161,82 @@ pub fn run() {
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+fn update_tray_menu(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
+    // Set up system tray
+    let toggle_visibility =
+        MenuItemBuilder::with_id(WINDOW_VISIBILITY_MENU_ITEM_ID, WINDOW_VISIBILITY_TITLE)
+            .build(app)?;
+    let quit = MenuItemBuilder::with_id(WINDOW_QUIT_MENU_ITEM_ID, WINDOW_QUIT_TITLE).build(app)?;
+
+    // Crea i sotto-elementi
+    let clipboard_items: Vec<MenuItem<_>> = get_clipboard_log()
+        .iter()
+        .take(20)
+        .enumerate()
+        .map(|(i, entry)| {
+            MenuItemBuilder::with_id(&format!("clipboard_{}", i), &entry.content).build(app)
+        })
+        .collect::<Result<_, _>>()?;
+    let clipboard_refs: Vec<&dyn IsMenuItem<_>> =
+        clipboard_items.iter().map(|item| item as _).collect();
+    let clipboard_submenu = SubmenuBuilder::new(app, "Clipboard")
+        .items(&clipboard_refs)
+        .build()?;
+    let recent_items: Vec<MenuItem<_>> = load_recent_files()
+        .iter()
+        .take(20)
+        .enumerate()
+        .map(|(i, entry)| {
+            MenuItemBuilder::with_id(&format!("recent_{}", i), &entry.name).build(app)
+        })
+        .collect::<Result<_, _>>()?;
+    let recent_refs: Vec<&dyn IsMenuItem<_>> = recent_items.iter().map(|item| item as _).collect();
+    let recent_submenu = SubmenuBuilder::new(app, "Recent")
+        .items(&recent_refs)
+        .build()?;
+
+    let menu = MenuBuilder::new(app)
+        .items(&[
+            &clipboard_submenu,
+            &recent_submenu,
+            &toggle_visibility,
+            &quit,
+        ])
+        .build()?;
+
+    if let Some(tray_icon) = app.tray_by_id(MAIN_WINDOW_NAME) {
+        tray_icon.set_menu(Some(menu)).unwrap();
+        tray_icon.on_menu_event(move |app, event| match event.id().as_ref() {
+            WINDOW_VISIBILITY_MENU_ITEM_ID => toggle_app_visibility(app),
+            WINDOW_QUIT_MENU_ITEM_ID => {
+                println!("Exiting the app...");
+
+                app.cleanup_before_exit();
+                std::process::exit(0);
+            }
+            id if id.starts_with("clipboard_") => {
+                let index = id.strip_prefix("clipboard_").unwrap();
+                let clipboard_items = get_clipboard_log();
+                if let Some(item) = clipboard_items.get(index.parse::<usize>().unwrap()) {
+                    println!("Clipboard item clicked: {}", item.content);
+                    clipboard::set_clipboard_text(&item.content);
+                }
+            }
+            id if id.starts_with("recent_") => {
+                let index = id.strip_prefix("recent_").unwrap();
+                let recent_items = load_recent_files();
+                if let Some(item) = recent_items.get(index.parse::<usize>().unwrap()) {
+                    println!("Recent item clicked: {}", item.name);
+                    open_file(item.path.clone());
+                }
+            }
+            id => println!("Unknown tray event id: {}", id),
+        });
+    } else {
+        println!("Cannot find the 'main' tray icon :(");
+    }
+
+    Ok(())
 }

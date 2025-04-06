@@ -1,3 +1,4 @@
+use crate::update_tray_menu;
 use dirs_next::data_dir;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -99,6 +100,7 @@ pub fn read_recent_files() -> Vec<RecentFileEntry> {
 
 pub fn send_event_to_frontend(app_handle: &tauri::AppHandle, entries: Vec<RecentFileEntry>) {
     app_handle.emit("recents-changed", entries).unwrap();
+    let _ = update_tray_menu(app_handle);
 }
 
 fn get_recent_file_path() -> PathBuf {

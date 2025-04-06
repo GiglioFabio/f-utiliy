@@ -16,7 +16,6 @@ cargo tauri build
 
 ## TODO
 
-Cancellazione lista copia
-Aggiunta funzionalità nei menu in alto
-
-Input che cancella la formattazione e risalva nella clipboard
+copia img che viene salvata su file
+base64 to file
+jpg to png e viceversa

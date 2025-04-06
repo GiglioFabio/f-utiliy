@@ -1,3 +1,4 @@
+use crate::update_tray_menu;
 use arboard::Clipboard;
 use dirs_next::data_dir;
 use enigo::{Enigo, Key, KeyboardControllable};
@@ -88,6 +89,7 @@ pub fn get_clipboard_log() -> Vec<ClipboardEntry> {
 // -------------------------
 pub fn send_event_to_frontend(app_handle: &tauri::AppHandle, entries: Vec<ClipboardEntry>) {
     app_handle.emit("clipboard-changed", entries).unwrap();
+    let _ = update_tray_menu(app_handle);
 }
 
 pub fn read_log() -> Vec<ClipboardEntry> {
@@ -113,8 +115,14 @@ pub fn clear_format_current_clipboard() {
     if let Ok(mut clipboard) = Clipboard::new() {
         if let Ok(text) = clipboard.get_text() {
             let cleaned = text.trim().to_string();
-            let _ = clipboard.set_text(cleaned);
+            set_clipboard_text(&cleaned);
         }
+    }
+}
+
+pub fn set_clipboard_text(text: &str) {
+    if let Ok(mut clipboard) = Clipboard::new() {
+        let _ = clipboard.set_text(text.to_string());
     }
 }
 
