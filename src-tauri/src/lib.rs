@@ -33,7 +33,13 @@ fn toggle_app_visibility(app: &AppHandle) {
     }
 }
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+#[tauri::command]
+fn open_accessibility_settings() {
+    std::process::Command::new("open")
+        .arg("x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")
+        .spawn()
+        .expect("failed to open System Settings");
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -48,7 +54,8 @@ pub fn run() {
             open_file,
             reveal_in_folder,
             add_recent_file,
-            load_recent_files
+            load_recent_files,
+            open_accessibility_settings
         ])
         .setup(|app| {
             // 🔔 Tray Icon con click per riaprire la finestra

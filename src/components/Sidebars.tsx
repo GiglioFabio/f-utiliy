@@ -1,8 +1,15 @@
-import { Clipboard, FileClock, Braces, Fingerprint } from 'lucide-react';
+import {
+  Clipboard,
+  FileClock,
+  Braces,
+  Fingerprint,
+  FileArchive,
+} from 'lucide-react';
 import { MenuItem } from '../interfaces';
 import { ClipboardPage, UuidPage } from '../pages';
 import JsonToolsPage from '../pages/JsonManage.page';
 import RecentFilesPage from '../pages/RecentFile.page';
+import SettingsPage from '../pages/Settings.page';
 
 type Props = {
   selected: MenuItem;
@@ -34,9 +41,16 @@ export const LEFT_MENU_ITEMS: MenuItem[] = [
   {
     id: 'recent',
     label: 'Recenti',
-    icon: FileClock,
+    icon: FileArchive,
     header: '📂 File Recenti',
     content: <RecentFilesPage />,
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    icon: FileClock,
+    header: '⚙️ Settings',
+    content: <SettingsPage />,
   },
 ];
 
