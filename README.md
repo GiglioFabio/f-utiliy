@@ -22,5 +22,4 @@ jpg to png e viceversa
 img compressor
 pdf compressor
 shortcut per simbolo euro
-conteggio testo
 conteggio json e stringify

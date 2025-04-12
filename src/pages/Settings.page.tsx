@@ -15,6 +15,8 @@ import { Input } from '../components';
 import { invoke } from '@tauri-apps/api/core';
 import { getInitialTheme, saveTheme } from '../utils';
 
+type SettingsTabKey = 'generali';
+
 export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [username, setUsername] = useState('utente123');
@@ -40,14 +42,14 @@ export default function SettingsPage() {
 
   return (
     <div className='p-6 pt-0 max-w-3xl mx-auto'>
-      <Tabs defaultValue='generali' className='w-full'>
-        <TabsList className='mb-4 bg-card text-card-foreground border border-border rounded-lg'>
-          <TabsTrigger value='generali'>Generali</TabsTrigger>
+      <Tabs<SettingsTabKey> defaultValue='generali' className='w-full'>
+        <TabsList className='mb-4 bg-card text-card-foreground border border-border rounded-lg pl-2 pb-1 pr-2'>
+          <TabsTrigger<SettingsTabKey> value='generali'>Generali</TabsTrigger>
           {/* <TabsTrigger value='account'>Account</TabsTrigger>
           <TabsTrigger value='avanzate'>Avanzate</TabsTrigger> */}
         </TabsList>
 
-        <TabsContent value='generali'>
+        <TabsContent<SettingsTabKey> value='generali'>
           <Card>
             <CardContent className='p-6 space-y-6'>
               <div className='flex items-center justify-between'>

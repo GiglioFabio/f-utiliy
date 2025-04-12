@@ -1,29 +1,43 @@
-import React, { createContext, useContext, useState } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import { cn } from './util';
 
-type TabsContextType = {
-  activeTab: string;
-  setActiveTab: (value: string) => void;
+// Type-safe TabsContext
+type TabsContextType<T extends string> = {
+  activeTab: T;
+  setActiveTab: Dispatch<SetStateAction<T>>;
 };
 
-const TabsContext = createContext<TabsContextType | undefined>(undefined);
+const TabsContext = createContext<TabsContextType<any> | undefined>(undefined);
 
-function useTabsContext() {
+// Custom hook
+function useTabsContext<T extends string>() {
   const context = useContext(TabsContext);
   if (!context) {
     throw new Error('useTabsContext must be used within a <Tabs />');
   }
-  return context;
+  return context as TabsContextType<T>;
 }
 
-interface TabsProps {
-  defaultValue: string;
-  children: React.ReactNode;
+// Tabs component
+interface TabsProps<T extends string> {
+  defaultValue: T;
+  children: ReactNode;
   className?: string;
 }
 
-export function Tabs({ defaultValue, children, className }: TabsProps) {
-  const [activeTab, setActiveTab] = useState(defaultValue);
+export function Tabs<T extends string>({
+  defaultValue,
+  children,
+  className,
+}: TabsProps<T>) {
+  const [activeTab, setActiveTab] = useState<T>(defaultValue);
 
   return (
     <TabsContext.Provider value={{ activeTab, setActiveTab }}>
@@ -33,21 +47,24 @@ export function Tabs({ defaultValue, children, className }: TabsProps) {
 }
 
 interface TabsListProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }
 
 export function TabsList({ children, className }: TabsListProps) {
-  return <div className={`flex border-b ${className}`}>{children}</div>;
+  return <div className={cn('flex border-b', className)}>{children}</div>;
 }
 
-interface TabsTriggerProps {
-  value: string;
-  children: React.ReactNode;
+interface TabsTriggerProps<T extends string> {
+  value: T;
+  children: ReactNode;
 }
 
-export function TabsTrigger({ value, children }: TabsTriggerProps) {
-  const { activeTab, setActiveTab } = useTabsContext();
+export function TabsTrigger<T extends string>({
+  value,
+  children,
+}: TabsTriggerProps<T>) {
+  const { activeTab, setActiveTab } = useTabsContext<T>();
   const isActive = activeTab === value;
 
   return (
@@ -64,12 +81,15 @@ export function TabsTrigger({ value, children }: TabsTriggerProps) {
   );
 }
 
-interface TabsContentProps {
-  value: string;
-  children: React.ReactNode;
+interface TabsContentProps<T extends string> {
+  value: T;
+  children: ReactNode;
 }
 
-export function TabsContent({ value, children }: TabsContentProps) {
-  const { activeTab } = useTabsContext();
+export function TabsContent<T extends string>({
+  value,
+  children,
+}: TabsContentProps<T>) {
+  const { activeTab } = useTabsContext<T>();
   return activeTab === value ? <div className='pt-4'>{children}</div> : null;
 }

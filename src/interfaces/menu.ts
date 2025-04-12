@@ -1,4 +1,10 @@
-export type MenuItemId = 'clipboard' | 'json' | 'uuid' | 'recent' | 'settings';
+export type MenuItemId =
+  | 'clipboard'
+  | 'json'
+  | 'uuid'
+  | 'recent'
+  | 'settings'
+  | 'strings';
 
 export type MenuItem = {
   id: MenuItemId;

@@ -4,12 +4,14 @@ import {
   Braces,
   Fingerprint,
   FileArchive,
+  Text,
 } from 'lucide-react';
 import { MenuItem, MenuItemId } from '../interfaces';
 import { ClipboardPage, UuidPage } from '../pages';
 import JsonToolsPage from '../pages/JsonManage.page';
 import RecentFilesPage from '../pages/RecentFile.page';
 import SettingsPage from '../pages/Settings.page';
+import StringToolsPage from '../pages/StringManage.page';
 
 type Props = {
   selected: MenuItem;
@@ -37,6 +39,13 @@ export const MENU_ITEMS: Record<MenuItemId, MenuItem> = {
     icon: Braces,
     header: '🛠️ Strumenti JSON',
     content: <JsonToolsPage />,
+  },
+  strings: {
+    id: 'strings',
+    label: 'String Tools',
+    icon: Text,
+    header: '🔤 String Tools',
+    content: <StringToolsPage />,
   },
   uuid: {
     id: 'uuid',

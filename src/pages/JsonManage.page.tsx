@@ -21,7 +21,14 @@ const JsonToolsPage: React.FC = () => {
       setOutput(JSON.stringify(parsed, null, 2));
       setError('');
     } catch {
-      setError('Errore di parsing JSON.');
+      try {
+        const restest = input.replace(/\//g, '');
+        const parsed = JSON.parse(restest);
+        setOutput(JSON.stringify(parsed, null, 2));
+        setError('');
+      } catch (e) {
+        setError('Errore di parsing JSON.');
+      }
     }
   };
 
