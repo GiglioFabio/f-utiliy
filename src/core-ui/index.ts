@@ -4,3 +4,6 @@ export * from './TextArea';
 export * from './Tabs';
 export * from './Switch';
 export * from './Label';
+export * from './Slider';
+export * from './Loader';
+export * from './ToastProvider';

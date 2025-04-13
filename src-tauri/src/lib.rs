@@ -9,6 +9,8 @@ mod filemanager;
 use filemanager::{
     add_recent_file, clear_single_recent_file, load_recent_files, open_file, reveal_in_folder,
 };
+mod images_utils;
+use images_utils::compress_and_adjust_image;
 
 const MAIN_WINDOW_NAME: &str = "main";
 const WINDOW_VISIBILITY_MENU_ITEM_ID: &str = "visibility";
@@ -54,7 +56,8 @@ pub fn run() {
             add_recent_file,
             load_recent_files,
             clear_single_recent_file,
-            open_accessibility_settings
+            open_accessibility_settings,
+            compress_and_adjust_image
         ])
         .setup(|app| {
             // 🔔 Tray Icon

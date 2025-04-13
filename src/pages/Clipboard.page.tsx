@@ -4,6 +4,7 @@ import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { ClipboardCopy } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { invoke } from '@tauri-apps/api/core';
+import { useToast } from '../core-ui';
 
 type ClipboardEntry = {
   content: string;
@@ -12,6 +13,7 @@ type ClipboardEntry = {
 
 export function ClipboardPage() {
   const [copied, setCopied] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   const [clipBoardList, setClipBoardList] = useState<ClipboardEntry[]>([]);
 
@@ -38,6 +40,7 @@ export function ClipboardPage() {
   const handleCopy = async (content: string) => {
     await writeText(content);
     setCopied(content);
+    showToast('Copiato negli appunti!', 'success');
     setTimeout(() => setCopied(null), 1500);
   };
 
@@ -61,7 +64,7 @@ export function ClipboardPage() {
                 {entry.content}
               </pre>
             </div>
-            <div className='pl-4 pt-1'>
+            <div className='pl-4'>
               {copied === entry.content ? (
                 <span className='text-green-500 text-xs font-medium'>
                   Copiato!

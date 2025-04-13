@@ -19,7 +19,6 @@ cargo tauri build
 copia img che viene salvata su file
 base64 to file
 jpg to png e viceversa
-img compressor
 pdf compressor
 shortcut per simbolo euro
 conteggio json e stringify

@@ -5,6 +5,7 @@ import {
   Fingerprint,
   FileArchive,
   Text,
+  ImageIcon,
 } from 'lucide-react';
 import { MenuItem, MenuItemId } from '../interfaces';
 import { ClipboardPage, UuidPage } from '../pages';
@@ -12,6 +13,7 @@ import JsonToolsPage from '../pages/JsonManage.page';
 import RecentFilesPage from '../pages/RecentFile.page';
 import SettingsPage from '../pages/Settings.page';
 import StringToolsPage from '../pages/StringManage.page';
+import ImageToolsPage from '../pages/ImageManage.page';
 
 type Props = {
   selected: MenuItem;
@@ -53,6 +55,13 @@ export const MENU_ITEMS: Record<MenuItemId, MenuItem> = {
     icon: Fingerprint,
     header: '🔑 Generatore UUID',
     content: <UuidPage />,
+  },
+  images: {
+    id: 'images',
+    label: 'Images Tools',
+    icon: ImageIcon,
+    header: '🖼️ Image Tools',
+    content: <ImageToolsPage />,
   },
   settings: {
     id: 'settings',

@@ -4,6 +4,7 @@ export type MenuItemId =
   | 'uuid'
   | 'recent'
   | 'settings'
+  | 'images'
   | 'strings';
 
 export type MenuItem = {

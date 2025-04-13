@@ -4,10 +4,12 @@ import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { motion } from 'framer-motion';
 import { v4 as uuidv4 } from 'uuid';
 import { useGlobalContext } from '../contexts';
+import { useToast } from '../core-ui';
 
 export function UuidPage() {
   const { uuid, setUuid } = useGlobalContext();
   const [copied, setCopied] = useState(false);
+  const { showToast } = useToast();
 
   const generate = async () => {
     const newUuid = uuidv4(); // per ora v4
@@ -20,6 +22,7 @@ export function UuidPage() {
     if (!uuid) return;
     await writeText(uuid);
     setCopied(true);
+    showToast('Copiato negli appunti!', 'success');
     setTimeout(() => setCopied(false), 1500);
   };
 
@@ -36,14 +39,19 @@ export function UuidPage() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
+          onClick={copy}
           className='flex items-center justify-between bg-muted text-muted-foreground p-4 rounded shadow-sm transition-colors'>
           <code className='text-sm break-all font-mono'>{uuid}</code>
 
-          <button
-            onClick={copy}
-            className='ml-4 text-sm text-accent hover:underline transition-colors'>
-            {copied ? '✅ Copiato' : <ClipboardCopy className='w-4 h-4' />}
-          </button>
+          <div className='pl-4'>
+            {copied ? (
+              <span className='text-green-500 text-xs font-medium'>
+                Copiato!
+              </span>
+            ) : (
+              <ClipboardCopy className='w-4 h-4 text-muted-foreground hover:text-foreground' />
+            )}
+          </div>
         </motion.div>
       )}
     </div>

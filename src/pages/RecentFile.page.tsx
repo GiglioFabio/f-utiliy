@@ -111,11 +111,16 @@ const RecentFilesPage: React.FC = () => {
         <Button
           className='whitespace-nowrap px-4 py-2'
           onClick={async () => {
-            const file = await pickFile();
-            if (file) {
+            const selecteds = await pickFile({
+              multiple: false,
+              saveToRecent: true,
+              extensions: [],
+            });
+            if ((selecteds?.path?.length ?? 0) > 0) {
+              const path = selecteds?.path[0] ?? '';
               handleOpenFile({
-                ...file,
-                name: file.path.split('/').pop()!,
+                path,
+                name: path.split('/').pop() ?? '',
                 tags: [],
               });
             }

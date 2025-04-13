@@ -36,3 +36,7 @@ dirs-next = "2.0"
 open = "5"
 tauri-plugin-global-shortcut = "2"
 enigo = "0.1"
+
+image = "0.25"
+mozjpeg = "0.10"
+oxipng = "8"

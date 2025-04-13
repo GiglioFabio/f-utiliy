@@ -4,3 +4,4 @@ export * from './JsonManage.page';
 export * from './RecentFile.page';
 export * from './Settings.page';
 export * from './StringManage.page';
+export * from './ImageManage.page';
