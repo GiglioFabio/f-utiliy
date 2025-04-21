@@ -6,6 +6,7 @@ import {
   FileArchive,
   Text,
   ImageIcon,
+  ImageUpscaleIcon,
 } from 'lucide-react';
 import { MenuItem, MenuItemId } from '../interfaces';
 import { ClipboardPage, UuidPage } from '../pages';
@@ -14,6 +15,7 @@ import RecentFilesPage from '../pages/RecentFile.page';
 import SettingsPage from '../pages/Settings.page';
 import StringToolsPage from '../pages/StringManage.page';
 import ImageToolsPage from '../pages/ImageManage.page';
+import DrawingsPage from '../pages/Drawings.page';
 
 type Props = {
   selected: MenuItem;
@@ -62,6 +64,13 @@ export const MENU_ITEMS: Record<MenuItemId, MenuItem> = {
     icon: ImageIcon,
     header: '🖼️ Image Tools',
     content: <ImageToolsPage />,
+  },
+  drawing: {
+    id: 'drawing',
+    label: 'Drawing Tools',
+    icon: ImageUpscaleIcon,
+    header: '🖌️ Drawing Tools',
+    content: <DrawingsPage />,
   },
   settings: {
     id: 'settings',

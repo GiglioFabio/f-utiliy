@@ -1,6 +1,5 @@
 use crate::update_tray_menu;
 use arboard::Clipboard;
-use dirs_next::data_dir;
 use enigo::{Enigo, Key, KeyboardControllable};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
@@ -12,6 +11,8 @@ use std::{
     time::Duration,
 };
 use tauri::Emitter;
+
+use crate::utils::paths::get_app_base_path;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ClipboardEntry {
@@ -104,8 +105,7 @@ pub fn read_log() -> Vec<ClipboardEntry> {
 }
 
 fn get_log_path() -> PathBuf {
-    let mut base_dir =
-        data_dir().expect("Non è stato possibile trovare la cartella dei dati utente");
+    let mut base_dir = get_app_base_path();
     base_dir.push("clipboard-watcher");
     std::fs::create_dir_all(&base_dir).ok();
     base_dir.join("clipboard-log.json")

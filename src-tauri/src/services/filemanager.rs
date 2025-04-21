@@ -1,5 +1,5 @@
 use crate::update_tray_menu;
-use dirs_next::data_dir;
+use crate::utils::paths::get_app_base_path;
 use serde::{Deserialize, Serialize};
 use std::{
     fs::File,
@@ -120,8 +120,7 @@ pub fn send_event_to_frontend(app_handle: &tauri::AppHandle, entries: Vec<Recent
 }
 
 fn get_recent_file_path() -> PathBuf {
-    let mut base_dir =
-        data_dir().expect("Non è stato possibile trovare la cartella dei dati utente");
+    let mut base_dir = get_app_base_path();
     base_dir.push("recent_files");
     std::fs::create_dir_all(&base_dir).ok();
     base_dir.join("recent_file.json")

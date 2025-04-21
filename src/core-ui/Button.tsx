@@ -5,7 +5,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-type Variant = 'default' | 'destructive' | 'outline';
+type Variant = 'default' | 'destructive' | 'outline' | 'ghost';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
@@ -27,6 +27,7 @@ export const Button: React.FC<ButtonProps> = ({
     destructive: 'bg-destructive text-destructive-foreground hover:opacity-90',
     outline:
       'border border-input text-foreground bg-transparent hover:bg-muted',
+    ghost: 'bg-transparent hover:bg-accent text-foreground',
   };
 
   return (

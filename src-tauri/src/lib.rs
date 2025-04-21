@@ -3,14 +3,24 @@
 use tauri::menu::MenuItem;
 use tauri::menu::{IsMenuItem, MenuBuilder, MenuItemBuilder, SubmenuBuilder};
 use tauri::{AppHandle, Listener, Manager};
-mod clipboard;
-use clipboard::get_clipboard_log;
-mod filemanager;
-use filemanager::{
+mod utils {
+    pub mod paths;
+}
+mod services {
+    pub mod clipboard;
+    pub mod drawing_manager;
+    pub mod filemanager;
+    pub mod images_utils;
+}
+use services::clipboard::get_clipboard_log;
+use services::drawing_manager::{
+    clear_single_drawing_file, load_drawing_files, read_data_single_drawing_file,
+    read_json_drawing_file, save_drawing_data, save_drawing_to_file,
+};
+use services::filemanager::{
     add_recent_file, clear_single_recent_file, load_recent_files, open_file, reveal_in_folder,
 };
-mod images_utils;
-use images_utils::compress_and_adjust_image;
+use services::images_utils::compress_and_adjust_image;
 
 const MAIN_WINDOW_NAME: &str = "main";
 const WINDOW_VISIBILITY_MENU_ITEM_ID: &str = "visibility";
@@ -44,6 +54,7 @@ fn open_accessibility_settings() {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_log::Builder::new().build())
         // .plugin(tauri_plugin_global_shortcut::Builder::new().build()) //https://github.com/tauri-apps/plugins-workspace/issues/2540
         .plugin(tauri_plugin_dialog::init())
@@ -57,7 +68,13 @@ pub fn run() {
             load_recent_files,
             clear_single_recent_file,
             open_accessibility_settings,
-            compress_and_adjust_image
+            compress_and_adjust_image,
+            load_drawing_files,
+            clear_single_drawing_file,
+            save_drawing_data,
+            read_data_single_drawing_file,
+            save_drawing_to_file,
+            read_json_drawing_file
         ])
         .setup(|app| {
             // 🔔 Tray Icon
@@ -73,7 +90,7 @@ pub fn run() {
             let app_handle = app.handle().clone();
             // Avvia clipboard watcher in un task async
             tauri::async_runtime::spawn(async move {
-                clipboard::start_clipboard_watcher(app_handle);
+                services::clipboard::start_clipboard_watcher(app_handle);
             });
 
             // Autostart macOS
@@ -120,8 +137,8 @@ pub fn run() {
                                     }
                                     ShortcutState::Released => {
                                         println!("Cmd-SHIFT-V Released!");
-                                        clipboard::clear_format_current_clipboard();
-                                        clipboard::simulate_cmd_v();
+                                        services::clipboard::clear_format_current_clipboard();
+                                        services::clipboard::simulate_cmd_v();
                                     }
                                 }
                             }
@@ -223,7 +240,7 @@ fn update_tray_menu(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
                 let clipboard_items = get_clipboard_log();
                 if let Some(item) = clipboard_items.get(index.parse::<usize>().unwrap()) {
                     println!("Clipboard item clicked: {}", item.content);
-                    clipboard::set_clipboard_text(&item.content);
+                    services::clipboard::set_clipboard_text(&item.content);
                 }
             }
             id if id.starts_with("recent_") => {

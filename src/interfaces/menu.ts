@@ -5,7 +5,8 @@ export type MenuItemId =
   | 'recent'
   | 'settings'
   | 'images'
-  | 'strings';
+  | 'strings'
+  | 'drawing';
 
 export type MenuItem = {
   id: MenuItemId;
