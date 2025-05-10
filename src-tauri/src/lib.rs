@@ -200,7 +200,14 @@ fn update_tray_menu(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
         .take(20)
         .enumerate()
         .map(|(i, entry)| {
-            MenuItemBuilder::with_id(&format!("clipboard_{}", i), &entry.content).build(app)
+            //check if content is too long
+            let max_content_length = 200;
+            let content = if entry.content.len() > max_content_length {
+                format!("{}...", &entry.content[..max_content_length])
+            } else {
+                entry.content.clone()
+            };
+            MenuItemBuilder::with_id(&format!("clipboard_{}", i), content).build(app)
         })
         .collect::<Result<_, _>>()?;
     let clipboard_refs: Vec<&dyn IsMenuItem<_>> =

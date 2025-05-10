@@ -11,6 +11,8 @@ type ClipboardEntry = {
   timestamp: string;
 };
 
+const MAX_CHAR_LENGTH = 500;
+
 export function ClipboardPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const { showToast } = useToast();
@@ -61,7 +63,9 @@ export function ClipboardPage() {
                 #{idx + 1}
               </span>
               <pre className='whitespace-pre-wrap font-mono text-sm text-foreground'>
-                {entry.content}
+                {entry.content.length > MAX_CHAR_LENGTH
+                  ? `${entry.content.slice(0, MAX_CHAR_LENGTH)}...`
+                  : entry.content}
               </pre>
             </div>
             <div className='pl-4'>
