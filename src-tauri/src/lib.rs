@@ -11,6 +11,7 @@ mod services {
     pub mod drawing_manager;
     pub mod filemanager;
     pub mod images_utils;
+    pub mod spotify;
 }
 use services::clipboard::get_clipboard_log;
 use services::drawing_manager::{
@@ -21,6 +22,7 @@ use services::filemanager::{
     add_recent_file, clear_single_recent_file, load_recent_files, open_file, reveal_in_folder,
 };
 use services::images_utils::compress_and_adjust_image;
+use services::spotify::set_spotify_monitoring_state;
 
 const MAIN_WINDOW_NAME: &str = "main";
 const WINDOW_VISIBILITY_MENU_ITEM_ID: &str = "visibility";
@@ -74,7 +76,8 @@ pub fn run() {
             save_drawing_data,
             read_data_single_drawing_file,
             save_drawing_to_file,
-            read_json_drawing_file
+            read_json_drawing_file,
+            set_spotify_monitoring_state
         ])
         .setup(|app| {
             // 🔔 Tray Icon
@@ -88,10 +91,12 @@ pub fn run() {
             });
 
             let app_handle = app.handle().clone();
-            // Avvia clipboard watcher in un task async
-            tauri::async_runtime::spawn(async move {
-                services::clipboard::start_clipboard_watcher(app_handle);
-            });
+            // Avvia clipboard watcher in un task async (è nel service)
+            services::clipboard::start_clipboard_watcher(app_handle);
+
+            // Avvia spotify watcher in un task async (è nel service)
+            let app_handle = app.handle().clone();
+            services::spotify::start_spotify_watcher(app_handle);
 
             // Autostart macOS
             // TODO sembra non andare

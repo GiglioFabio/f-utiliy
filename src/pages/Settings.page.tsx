@@ -13,13 +13,19 @@ import {
 } from '../core-ui';
 import { Input } from '../components';
 import { invoke } from '@tauri-apps/api/core';
-import { getInitialTheme, saveTheme } from '../utils';
+import {
+  getInitialTheme,
+  saveTheme,
+  SPOTIFY_MONITOR_KEY,
+  toggleSpotifyMonitor,
+} from '../utils';
 
 type SettingsTabKey = 'generali';
 
 export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [username, setUsername] = useState('utente123');
+  const [spotifyMonitor, setSpotifyMonitor] = useState(false);
 
   function apriAccessibilita() {
     invoke('open_accessibility_settings');
@@ -29,6 +35,9 @@ export default function SettingsPage() {
     const savedTheme = getInitialTheme();
     document.documentElement.setAttribute('data-theme', savedTheme);
     setDarkMode(savedTheme === 'dark');
+
+    const savedSpotifyMonitor = localStorage.getItem(SPOTIFY_MONITOR_KEY);
+    setSpotifyMonitor(savedSpotifyMonitor === 'true');
   }, []);
 
   const toggleTheme = () => {
@@ -60,6 +69,18 @@ export default function SettingsPage() {
                   onCheckedChange={() => {
                     toggleTheme();
                     setDarkMode(!darkMode);
+                  }}
+                />
+              </div>
+
+              <div className='flex items-center justify-between'>
+                <Label htmlFor='spotify-monitor'>Spotify Adv Monitor</Label>
+                <Switch
+                  id='spotify-monitor'
+                  checked={spotifyMonitor}
+                  onCheckedChange={() => {
+                    toggleSpotifyMonitor(!spotifyMonitor);
+                    setSpotifyMonitor(!spotifyMonitor);
                   }}
                 />
               </div>

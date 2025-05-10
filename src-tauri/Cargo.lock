@@ -1381,6 +1381,7 @@ dependencies = [
  "enigo",
  "image 0.25.6",
  "mozjpeg",
+ "once_cell",
  "open",
  "oxipng",
  "serde",

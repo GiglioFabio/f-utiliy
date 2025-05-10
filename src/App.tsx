@@ -3,7 +3,7 @@ import Sidebar, { DEFAULT_MENU_ITEM } from './components/Sidebars';
 import ContentArea from './components/Content-Area';
 import { motion } from 'framer-motion';
 import { MenuItem } from './interfaces';
-import { getInitialTheme } from './utils';
+import { toggleInitialSpotifyMonitor, toggleInitialTheme } from './utils';
 import { DialogProvider, GlobalProvider } from './contexts';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from './components/ErrorFallback';
@@ -13,10 +13,8 @@ function App() {
   const [selected, setSelected] = useState<MenuItem>(DEFAULT_MENU_ITEM);
 
   useEffect(() => {
-    const savedTheme = getInitialTheme();
-    if (savedTheme) {
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    }
+    toggleInitialTheme();
+    toggleInitialSpotifyMonitor();
   }, []);
 
   return (
