@@ -18,6 +18,8 @@ import {
   saveTheme,
   SPOTIFY_MONITOR_KEY,
   toggleSpotifyMonitor,
+  toggleCallMonitor,
+  CALL_MONITOR_KEY,
 } from '../utils';
 
 type SettingsTabKey = 'generali';
@@ -26,6 +28,7 @@ export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [username, setUsername] = useState('utente123');
   const [spotifyMonitor, setSpotifyMonitor] = useState(false);
+  const [callMonitor, setCallMonitor] = useState(false);
 
   function apriAccessibilita() {
     invoke('open_accessibility_settings');
@@ -38,6 +41,9 @@ export default function SettingsPage() {
 
     const savedSpotifyMonitor = localStorage.getItem(SPOTIFY_MONITOR_KEY);
     setSpotifyMonitor(savedSpotifyMonitor === 'true');
+
+    const savedCallMonitor = localStorage.getItem(CALL_MONITOR_KEY);
+    setCallMonitor(savedCallMonitor === 'true');
   }, []);
 
   const toggleTheme = () => {
@@ -81,6 +87,18 @@ export default function SettingsPage() {
                   onCheckedChange={() => {
                     toggleSpotifyMonitor(!spotifyMonitor);
                     setSpotifyMonitor(!spotifyMonitor);
+                  }}
+                />
+              </div>
+
+              <div className='flex items-center justify-between'>
+                <Label htmlFor='call-monitor'>Call Adv Monitor</Label>
+                <Switch
+                  id='call-monitor'
+                  checked={callMonitor}
+                  onCheckedChange={() => {
+                    toggleCallMonitor(!callMonitor);
+                    setCallMonitor(!callMonitor);
                   }}
                 />
               </div>

@@ -6,6 +6,7 @@ export type MenuItemId =
   | 'settings'
   | 'images'
   | 'strings'
+  | 'recordings'
   | 'drawing';
 
 export type MenuItem = {

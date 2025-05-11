@@ -7,12 +7,19 @@ mod utils {
     pub mod paths;
 }
 mod services {
+    pub mod calls_recorders;
     pub mod clipboard;
     pub mod drawing_manager;
     pub mod filemanager;
     pub mod images_utils;
     pub mod spotify;
 }
+use services::calls_recorders::{
+    create_transcript, delete_file_recording, get_recorded_files, open_file_recording,
+    open_recording_folder, set_calls_monitoring_state, start_video_recording_invoke,
+    stop_video_recording_invoke,
+};
+
 use services::clipboard::get_clipboard_log;
 use services::drawing_manager::{
     clear_single_drawing_file, load_drawing_files, read_data_single_drawing_file,
@@ -77,7 +84,15 @@ pub fn run() {
             read_data_single_drawing_file,
             save_drawing_to_file,
             read_json_drawing_file,
-            set_spotify_monitoring_state
+            set_spotify_monitoring_state,
+            set_calls_monitoring_state,
+            start_video_recording_invoke,
+            stop_video_recording_invoke,
+            delete_file_recording,
+            open_recording_folder,
+            create_transcript,
+            get_recorded_files,
+            open_file_recording
         ])
         .setup(|app| {
             // 🔔 Tray Icon
@@ -97,6 +112,8 @@ pub fn run() {
             // Avvia spotify watcher in un task async (è nel service)
             let app_handle = app.handle().clone();
             services::spotify::start_spotify_watcher(app_handle);
+
+            services::calls_recorders::start_teams_monitoring();
 
             // Autostart macOS
             // TODO sembra non andare

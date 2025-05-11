@@ -16,6 +16,7 @@ import SettingsPage from '../pages/Settings.page';
 import StringToolsPage from '../pages/StringManage.page';
 import ImageToolsPage from '../pages/ImageManage.page';
 import DrawingsPage from '../pages/Drawings.page';
+import RecordingPage from '../pages/Recordings.page';
 
 type Props = {
   selected: MenuItem;
@@ -64,6 +65,13 @@ export const MENU_ITEMS: Record<MenuItemId, MenuItem> = {
     icon: ImageIcon,
     header: '🖼️ Image Tools',
     content: <ImageToolsPage />,
+  },
+  recordings: {
+    id: 'recordings',
+    label: 'Recordings',
+    icon: FileClock,
+    header: '🎤 Recordings',
+    content: <RecordingPage />,
   },
   drawing: {
     id: 'drawing',

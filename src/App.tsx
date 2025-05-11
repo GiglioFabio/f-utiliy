@@ -3,7 +3,11 @@ import Sidebar, { DEFAULT_MENU_ITEM } from './components/Sidebars';
 import ContentArea from './components/Content-Area';
 import { motion } from 'framer-motion';
 import { MenuItem } from './interfaces';
-import { toggleInitialSpotifyMonitor, toggleInitialTheme } from './utils';
+import {
+  toggleInitialSpotifyMonitor,
+  toggleInitialTheme,
+  toggleInitialCallMonitor,
+} from './utils';
 import { DialogProvider, GlobalProvider } from './contexts';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from './components/ErrorFallback';
@@ -15,6 +19,7 @@ function App() {
   useEffect(() => {
     toggleInitialTheme();
     toggleInitialSpotifyMonitor();
+    toggleInitialCallMonitor();
   }, []);
 
   return (
