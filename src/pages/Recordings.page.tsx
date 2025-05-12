@@ -44,14 +44,14 @@ const RecordingPage: React.FC = () => {
     await invoke('open_file_recording', { path: path });
   };
 
-  const deleteFile = async (path: string) => {
-    try {
-      await invoke('delete_file_recording', { path: path });
-      await fetchFiles();
-    } catch (error) {
-      console.error('Errore nella cancellazione del file:', error);
-    }
-  };
+  // const deleteFile = async (path: string) => {
+  //   try {
+  //     await invoke('delete_file_recording', { path: path });
+  //     await fetchFiles();
+  //   } catch (error) {
+  //     console.error('Errore nella cancellazione del file:', error);
+  //   }
+  // };
 
   const createTranscript = async (path: string) => {
     console.log('Transcript creato per:', path);

@@ -22,3 +22,5 @@ jpg to png e viceversa
 pdf compressor
 shortcut per simbolo euro
 conteggio json e stringify
+
+andare su attivazione del microfono
