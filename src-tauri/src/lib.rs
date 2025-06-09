@@ -203,7 +203,12 @@ fn update_tray_menu(app: &AppHandle) -> Result<(), Box<dyn std::error::Error>> {
             //check if content is too long
             let max_content_length = 200;
             let content = if entry.content.len() > max_content_length {
-                format!("{}...", &entry.content[..max_content_length])
+                let truncated = entry
+                    .content
+                    .chars()
+                    .take(max_content_length)
+                    .collect::<String>();
+                format!("{}...", truncated)
             } else {
                 entry.content.clone()
             };
